@@ -1,22 +1,21 @@
 name:                fas3
 version:             0.1.0.0
 synopsis:            Haskell API bindings for the upcoming Fedora Accounts System v3
--- description:         
+-- description:
 homepage:            https://github.com/fedora-infra/fas3-api-haskell
 license:             BSD2
 license-file:        LICENSE
 author:              Ricky Elrod
 maintainer:          relrod@redhat.com
--- copyright:           
+copyright:           (c) 2015 Red Hat, Inc.
 category:            Fedora, Web
 build-type:          Simple
--- extra-source-files:  
 cabal-version:       >=1.10
 
 library
-  -- exposed-modules:     
-  -- other-modules:       
-  -- other-extensions:    
+  exposed-modules:   Fedora.FAS.Types
+  -- other-modules:
+  -- other-extensions:
   build-depends:       aeson >= 0.7 && < 0.9
                      , base >= 4 && < 5
                      , wreq >= 0.3 && < 0.4
