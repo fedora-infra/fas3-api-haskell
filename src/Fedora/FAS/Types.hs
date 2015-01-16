@@ -6,6 +6,15 @@ import Control.Applicative
 import Control.Lens
 import Control.Monad (mzero)
 import Data.Aeson
+import qualified Data.Text as T
+import Data.Time.Clock (UTCTime)
+
+type APIKey = T.Text
+
+data ClientConfig = ClientConfig {
+    baseUrl :: String
+  , apiKey  :: APIKey
+  } deriving (Eq, Ord, Show)
 
 data Person = Person {
     personUsername     :: String
@@ -13,7 +22,7 @@ data Person = Person {
   , personIdNumber     :: Integer
   , personAvatar       :: Maybe String
   , personFullname     :: String
-  , personCreationDate :: String -- TODO: Use a real Date type
+  , personCreationDate :: UTCTime
   , personIrcNick      :: Maybe String
   , personEmail        :: String
   } deriving (Eq, Ord, Show)
@@ -31,3 +40,11 @@ instance FromJSON Person where
                          <*> v .:? "Ircnick"
                          <*> v .:  "Email"
   parseJSON _          = mzero
+
+data SearchType = Id | Username | Email | IRCNick deriving (Eq, Ord)
+
+instance Show SearchType where
+  show Id       = "id"
+  show Username = "username"
+  show Email    = "email"
+  show IRCNick  = "ircnick"
