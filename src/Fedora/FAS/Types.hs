@@ -46,8 +46,15 @@ makeFields ''Person
 data PersonResponse = PersonResponse {
     personResponseStartTimestamp :: UTCTime
   , personResponseEndTimestamp   :: UTCTime
-  , personResponsePeople         :: [Person]
+  , personResponsePeople         :: Person
   } deriving (Eq, Ord, Show)
+
+instance FromJSON PersonResponse where
+  parseJSON (Object v) = PersonResponse
+                         <$> v .:  "StartTimeStamp"
+                         <*> v .:  "EndTimeStamp"
+                         <*> v .:  "People"
+  parseJSON _          = mzero
 
 makeFields ''PersonResponse
 
