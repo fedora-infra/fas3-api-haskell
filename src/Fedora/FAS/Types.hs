@@ -44,9 +44,9 @@ instance FromJSON Person where
 makeFields ''Person
 
 data PersonResponse = PersonResponse {
-    prStartTimestamp :: UTCTime
-  , prEndTimestamp   :: UTCTime
-  , prPeople         :: [Person]
+    personResponseStartTimestamp :: UTCTime
+  , personResponseEndTimestamp   :: UTCTime
+  , personResponsePeople         :: [Person]
   } deriving (Eq, Ord, Show)
 
 makeFields ''PersonResponse
