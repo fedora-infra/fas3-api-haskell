@@ -2,7 +2,7 @@
 module Fedora.FAS.Client where
 
 import Control.Lens
---import Data.Aeson
+import Data.Aeson
 import qualified Data.ByteString.Char8 as C8
 import qualified Data.ByteString.Lazy.Char8 as LC8
 import Fedora.FAS.Types
@@ -16,11 +16,15 @@ localClientConfig = ClientConfig "http://localhost:6543"
 encodePath :: String -> String
 encodePath = C8.unpack . urlEncode False . C8.pack
 
-listPeople :: ClientConfig -- ^ How to connect to FAS3
-           -> SearchType -- ^ What to filter results by
-           -> String -- ^ The search query
-           -> IO LC8.ByteString -- TODO
-listPeople (ClientConfig b a) search query = do
+-- | Finds a unique person by some unique identifier ('SearchType').
+--
+-- Internally, this hits @/api/people/<searchtype>/<query>@.
+getPerson :: ClientConfig -- ^ How to connect to FAS3
+          -> SearchType -- ^ What to filter results by
+          -> String -- ^ The search query
+          -> IO (Maybe PersonResponse)
+getPerson (ClientConfig b a) search query = do
   let opts = defaults & param "apikey" .~ [a]
   r <- getWith opts (b ++ "/api/people/" ++ show search ++ "/" ++ encodePath query)
-  return $ r ^. responseBody
+  LC8.putStrLn $ r ^. responseBody
+  return . decode $ r ^. responseBody
