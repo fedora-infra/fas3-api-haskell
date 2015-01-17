@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
 module Fedora.FAS.Types where
@@ -39,7 +41,7 @@ instance FromJSON Person where
                          <*> v .:  "Email"
   parseJSON _          = mzero
 
-makeLenses ''Person
+makeFields ''Person
 
 data PersonResponse = PersonResponse {
     prStartTimestamp :: UTCTime
@@ -47,7 +49,7 @@ data PersonResponse = PersonResponse {
   , prPeople         :: [Person]
   } deriving (Eq, Ord, Show)
 
-makeLenses ''PersonResponse
+makeFields ''PersonResponse
 
 data SearchType = Id | Username | Email | IRCNick deriving (Eq, Ord)
 
