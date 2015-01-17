@@ -27,8 +27,6 @@ data Person = Person {
   , personEmail        :: String
   } deriving (Eq, Ord, Show)
 
-makeLenses ''Person
-
 instance FromJSON Person where
   parseJSON (Object v) = Person
                          <$> v .:  "Username"
@@ -40,6 +38,16 @@ instance FromJSON Person where
                          <*> v .:? "Ircnick"
                          <*> v .:  "Email"
   parseJSON _          = mzero
+
+makeLenses ''Person
+
+data PersonResponse = PersonResponse {
+    prStartTimestamp :: UTCTime
+  , prEndTimestamp   :: UTCTime
+  , prPeople         :: [Person]
+  } deriving (Eq, Ord, Show)
+
+makeLenses ''PersonResponse
 
 data SearchType = Id | Username | Email | IRCNick deriving (Eq, Ord)
 
