@@ -11,10 +11,12 @@ import Network.Wreq
 
 localClientConfig :: APIKey -> ClientConfig
 localClientConfig = ClientConfig "http://localhost:6543"
+{-# INLINE localClientConfig #-}
 
 -- TODO: This is inefficient.
 encodePath :: String -> String
 encodePath = C8.unpack . urlEncode False . C8.pack
+{-# INLINE encodePath #-}
 
 -- | Finds a unique person by some unique identifier ('SearchType').
 --
