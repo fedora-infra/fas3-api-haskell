@@ -12,14 +12,14 @@ import Data.Time.Clock (UTCTime)
 import Fedora.FAS.Types.Pages
 
 data Person = Person {
-    personUsername     :: String
-  , personStatus       :: Integer
-  , personIdNumber     :: Integer
-  , personAvatar       :: Maybe String
-  , personFullname     :: String
-  , personCreationDate :: UTCTime
-  , personIrcNick      :: Maybe String
-  , personEmail        :: String
+    _username     :: String
+  , _status       :: Integer
+  , _idNumber     :: Integer
+  , _avatar       :: Maybe String
+  , _fullname     :: String
+  , _creationDate :: UTCTime
+  , _ircNick      :: Maybe String
+  , _email        :: String
   } deriving (Eq, Ord, Show)
 
 instance FromJSON Person where
