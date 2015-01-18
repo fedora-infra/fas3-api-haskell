@@ -15,6 +15,10 @@ cabal-version:       >=1.10
 library
   exposed-modules:   Fedora.FAS.Client
                    , Fedora.FAS.Types
+                   , Fedora.FAS.Types.ClientConfig
+                   , Fedora.FAS.Types.Pages
+                   , Fedora.FAS.Types.Person
+                   , Fedora.FAS.Types.SearchType
   -- other-modules:
   -- other-extensions:
   build-depends:       aeson >= 0.7 && < 0.9
