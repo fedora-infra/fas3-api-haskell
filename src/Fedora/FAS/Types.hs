@@ -58,6 +58,36 @@ instance FromJSON PersonResponse where
 
 makeFields ''PersonResponse
 
+data Pages = Pages {
+    pagesCurrent :: Integer
+  , pagesTotal   :: Integer
+  } deriving (Eq, Ord, Show)
+
+instance FromJSON Pages where
+  parseJSON (Object v) = Pages
+                         <$> v .:  "Current"
+                         <*> v .:  "Total"
+  parseJSON _          = mzero
+
+makeFields ''Pages
+
+data PeopleResponse = PeopleResponse {
+    poepleResponseStartTimestamp :: UTCTime
+  , peopleResponseEndTimestamp   :: UTCTime
+  , peopleResponsePages          :: Pages
+  , peopleResponsePeople         :: [Person]
+  } deriving (Eq, Ord, Show)
+
+instance FromJSON PeopleResponse where
+  parseJSON (Object v) = PeopleResponse
+                         <$> v .:  "StartTimeStamp"
+                         <*> v .:  "EndTimeStamp"
+                         <*> v .:  "Pages"
+                         <*> v .:  "People"
+  parseJSON _          = mzero
+
+makeFields ''PeopleResponse
+
 data SearchType = Id | Username | Email | IRCNick deriving (Eq, Ord)
 
 instance Show SearchType where
