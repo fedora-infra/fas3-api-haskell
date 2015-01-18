@@ -34,7 +34,7 @@ instance FromJSON Person where
                          <*> v .:  "Email"
   parseJSON _          = mzero
 
-makeFields ''Person
+makeLenses ''Person
 
 data PersonResponse = PersonResponse {
     personResponseStartTimestamp :: UTCTime

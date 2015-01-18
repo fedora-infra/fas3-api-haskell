@@ -1,5 +1,3 @@
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
 module Fedora.FAS.Types.Pages where
@@ -10,8 +8,8 @@ import Control.Monad (mzero)
 import Data.Aeson
 
 data Pages = Pages {
-    pagesCurrent :: Integer
-  , pagesTotal   :: Integer
+    _current :: Integer
+  , _total   :: Integer
   } deriving (Eq, Ord, Show)
 
 instance FromJSON Pages where
@@ -20,4 +18,4 @@ instance FromJSON Pages where
                          <*> v .:  "Total"
   parseJSON _          = mzero
 
-makeFields ''Pages
+makeLenses ''Pages
