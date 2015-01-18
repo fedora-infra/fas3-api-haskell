@@ -1,25 +1,21 @@
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell #-}
 module Fedora.FAS.Types.Person where
 
 import Control.Applicative
-import Control.Lens
 import Control.Monad (mzero)
 import Data.Aeson
 import Fedora.FAS.Types.Pages
 import Fedora.FAS.Types.UTCTimeFAS
 
 data Person = Person {
-    _username     :: String
-  , _status       :: Integer
-  , _idNumber     :: Integer
-  , _avatar       :: Maybe String
-  , _fullname     :: String
-  , _creationDate :: UTCTimeFAS
-  , _ircNick      :: Maybe String
-  , _email        :: String
+    personUsername     :: String
+  , personStatus       :: Integer
+  , personIdNumber     :: Integer
+  , personAvatar       :: Maybe String
+  , personFullname     :: String
+  , personCreationDate :: UTCTimeFAS
+  , personIrcNick      :: Maybe String
+  , personEmail        :: String
   } deriving (Eq, Ord, Show)
 
 instance FromJSON Person where
@@ -34,8 +30,6 @@ instance FromJSON Person where
                          <*> v .:  "Email"
   parseJSON _          = mzero
 
-makeLenses ''Person
-
 data PersonResponse = PersonResponse {
     personResponseStartTimestamp :: UTCTimeFAS
   , personResponseEndTimestamp   :: UTCTimeFAS
@@ -48,8 +42,6 @@ instance FromJSON PersonResponse where
                          <*> v .:  "EndTimeStamp"
                          <*> v .:  "People"
   parseJSON _          = mzero
-
-makeFields ''PersonResponse
 
 data PeopleResponse = PeopleResponse {
     poepleResponseStartTimestamp :: UTCTimeFAS
@@ -65,5 +57,3 @@ instance FromJSON PeopleResponse where
                          <*> v .:  "Pages"
                          <*> v .:  "People"
   parseJSON _          = mzero
-
-makeFields ''PeopleResponse

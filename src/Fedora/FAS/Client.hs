@@ -43,3 +43,17 @@ getPeople (ClientConfig b a) page limit = do
                       & param "limit" .~ [T.pack . show $ limit]
       url  = b ++ "/api/people"
   E.try $ asJSON =<< getWith opts url
+
+-- | Get a list of all groups.
+--
+-- Internally, this hits @\/api\/groups@.
+getGroups :: ClientConfig -- ^ How to connect to FAS3
+          -> Integer -- ^ The page number
+          -> Integer -- ^ The limit
+          -> IO (Either E.SomeException (Response GroupsResponse))
+getGroups (ClientConfig b a) page limit = do
+  let opts = defaults & param "apikey" .~ [a]
+                      & param "page" .~ [T.pack . show $ page]
+                      & param "limit" .~ [T.pack . show $ limit]
+      url  = b ++ "/api/groups"
+  E.try $ asJSON =<< getWith opts url
