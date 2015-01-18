@@ -4,7 +4,6 @@ module Fedora.FAS.Client where
 import Control.Lens
 import Data.Aeson
 import qualified Data.ByteString.Char8 as C8
-import qualified Data.ByteString.Lazy.Char8 as LC8
 import qualified Data.Text as T
 import Fedora.FAS.Types
 import Network.HTTP.Types (urlEncode)
@@ -27,7 +26,6 @@ getPerson :: ClientConfig -- ^ How to connect to FAS3
 getPerson (ClientConfig b a) search query = do
   let opts = defaults & param "apikey" .~ [a]
   r <- getWith opts (b ++ "/api/people/" ++ show search ++ "/" ++ encodePath query)
-  LC8.putStrLn $ r ^. responseBody
   return . decode $ r ^. responseBody
 
 -- | Get a list of all people.
@@ -42,5 +40,4 @@ getPeople (ClientConfig b a) page limit = do
                       & param "page" .~ [T.pack . show $ page]
                       & param "limit" .~ [T.pack . show $ limit]
   r <- getWith opts (b ++ "/api/people")
-  LC8.putStrLn $ r ^. responseBody
   return . decode $ r ^. responseBody
