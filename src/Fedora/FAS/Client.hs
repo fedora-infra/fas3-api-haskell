@@ -1,8 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Fedora.FAS.Client where
 
+import Control.Exception as E
 import Control.Lens
-import Data.Aeson
 import qualified Data.ByteString.Char8 as C8
 import qualified Data.Text as T
 import Fedora.FAS.Types
@@ -22,11 +22,11 @@ encodePath = C8.unpack . urlEncode False . C8.pack
 getPerson :: ClientConfig -- ^ How to connect to FAS3
           -> SearchType -- ^ What to filter results by
           -> String -- ^ The search query
-          -> IO (Maybe PersonResponse)
+          -> IO (Either E.SomeException (Response PersonResponse))
 getPerson (ClientConfig b a) search query = do
   let opts = defaults & param "apikey" .~ [a]
-  r <- getWith opts (b ++ "/api/people/" ++ show search ++ "/" ++ encodePath query)
-  return . decode $ r ^. responseBody
+      url  = b ++ "/api/people/" ++ show search ++ "/" ++ encodePath query
+  E.try $ asJSON =<< getWith opts url
 
 -- | Get a list of all people.
 --
@@ -34,10 +34,10 @@ getPerson (ClientConfig b a) search query = do
 getPeople :: ClientConfig -- ^ How to connect to FAS3
           -> Integer -- ^ The page number
           -> Integer -- ^ The limit
-          -> IO (Maybe PeopleResponse)
+          -> IO (Either E.SomeException (Response PeopleResponse))
 getPeople (ClientConfig b a) page limit = do
   let opts = defaults & param "apikey" .~ [a]
                       & param "page" .~ [T.pack . show $ page]
                       & param "limit" .~ [T.pack . show $ limit]
-  r <- getWith opts (b ++ "/api/people")
-  return . decode $ r ^. responseBody
+      url  = b ++ "/api/people"
+  E.try $ asJSON =<< getWith opts url

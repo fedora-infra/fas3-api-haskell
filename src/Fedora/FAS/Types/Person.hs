@@ -8,8 +8,8 @@ import Control.Applicative
 import Control.Lens
 import Control.Monad (mzero)
 import Data.Aeson
-import Data.Time.Clock (UTCTime)
 import Fedora.FAS.Types.Pages
+import Fedora.FAS.Types.UTCTimeFAS
 
 data Person = Person {
     _username     :: String
@@ -17,7 +17,7 @@ data Person = Person {
   , _idNumber     :: Integer
   , _avatar       :: Maybe String
   , _fullname     :: String
-  , _creationDate :: UTCTime
+  , _creationDate :: UTCTimeFAS
   , _ircNick      :: Maybe String
   , _email        :: String
   } deriving (Eq, Ord, Show)
@@ -37,8 +37,8 @@ instance FromJSON Person where
 makeLenses ''Person
 
 data PersonResponse = PersonResponse {
-    personResponseStartTimestamp :: UTCTime
-  , personResponseEndTimestamp   :: UTCTime
+    personResponseStartTimestamp :: UTCTimeFAS
+  , personResponseEndTimestamp   :: UTCTimeFAS
   , personResponsePeople         :: Person
   } deriving (Eq, Ord, Show)
 
@@ -52,8 +52,8 @@ instance FromJSON PersonResponse where
 makeFields ''PersonResponse
 
 data PeopleResponse = PeopleResponse {
-    poepleResponseStartTimestamp :: UTCTime
-  , peopleResponseEndTimestamp   :: UTCTime
+    poepleResponseStartTimestamp :: UTCTimeFAS
+  , peopleResponseEndTimestamp   :: UTCTimeFAS
   , peopleResponsePages          :: Pages
   , peopleResponsePeople         :: [Person]
   } deriving (Eq, Ord, Show)
