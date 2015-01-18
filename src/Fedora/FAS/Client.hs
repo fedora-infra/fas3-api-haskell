@@ -1,8 +1,19 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Fedora.FAS.Client where
+module Fedora.FAS.Client (
+  -- * Person
+  getPerson
+, getPeople
+
+  -- * Group
+, getGroups
+
+  -- * Utility
+, localClientConfig
+) where
 
 import Control.Exception as E
 import Control.Lens
+import Data.Aeson (FromJSON)
 import qualified Data.ByteString.Char8 as C8
 import qualified Data.Text as T
 import Fedora.FAS.Types
@@ -30,6 +41,20 @@ getPerson (ClientConfig b a) search query = do
       url  = b ++ "/api/people/" ++ show search ++ "/" ++ encodePath query
   E.try $ asJSON =<< getWith opts url
 
+-- | Get a list of something from the API.
+getList :: FromJSON a
+        => ClientConfig -- ^ How to connect to FAS3
+        -> String -- ^ The URL (path) to hit
+        -> Integer -- ^ The page number
+        -> Integer -- ^ The limit
+        -> IO (Either E.SomeException (Response a))
+getList (ClientConfig b a) path page limit = do
+  let opts = defaults & param "apikey" .~ [a]
+                      & param "page" .~ [T.pack . show $ page]
+                      & param "limit" .~ [T.pack . show $ limit]
+      url = b ++ path
+  E.try $ asJSON =<< getWith opts url
+
 -- | Get a list of all people.
 --
 -- Internally, this hits @\/api\/people@.
@@ -37,23 +62,15 @@ getPeople :: ClientConfig -- ^ How to connect to FAS3
           -> Integer -- ^ The page number
           -> Integer -- ^ The limit
           -> IO (Either E.SomeException (Response PeopleResponse))
-getPeople (ClientConfig b a) page limit = do
-  let opts = defaults & param "apikey" .~ [a]
-                      & param "page" .~ [T.pack . show $ page]
-                      & param "limit" .~ [T.pack . show $ limit]
-      url  = b ++ "/api/people"
-  E.try $ asJSON =<< getWith opts url
+getPeople = getList ?? "/api/people"
+{-# INLINE getPeople #-}
 
 -- | Get a list of all groups.
 --
--- Internally, this hits @\/api\/groups@.
+-- Internally, this hits @\/api\/group@.
 getGroups :: ClientConfig -- ^ How to connect to FAS3
           -> Integer -- ^ The page number
           -> Integer -- ^ The limit
           -> IO (Either E.SomeException (Response GroupsResponse))
-getGroups (ClientConfig b a) page limit = do
-  let opts = defaults & param "apikey" .~ [a]
-                      & param "page" .~ [T.pack . show $ page]
-                      & param "limit" .~ [T.pack . show $ limit]
-      url  = b ++ "/api/groups"
-  E.try $ asJSON =<< getWith opts url
+getGroups = getList ?? "/api/group"
+{-# INLINE getGroups #-}
