@@ -52,7 +52,7 @@ getList path page limit = do
 -- | Finds a unique person by some unique identifier ('SearchType').
 --
 -- Internally, this hits @\/api\/people\/<searchtype>\/<query>@.
-getPerson :: SearchType -- ^ What to filter results by
+getPerson :: PersonSearchType -- ^ What to filter results by
           -> String -- ^ The search query
           -> ReaderT ClientConfig IO (Either E.SomeException (Response PersonResponse))
 getPerson search query = do
