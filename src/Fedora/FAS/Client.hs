@@ -5,6 +5,7 @@ module Fedora.FAS.Client (
 , getPeople
 
   -- * Group
+, getGroup
 , getGroups
 
   -- * Utility
@@ -34,18 +35,6 @@ encodePath = C8.unpack . urlEncode False . C8.pack
 runFasQuery :: ReaderT r m a -> r -> m a
 runFasQuery = runReaderT
 
--- | Finds a unique person by some unique identifier ('SearchType').
---
--- Internally, this hits @\/api\/people\/<searchtype>\/<query>@.
-getPerson :: SearchType -- ^ What to filter results by
-          -> String -- ^ The search query
-          -> ReaderT ClientConfig IO (Either E.SomeException (Response PersonResponse))
-getPerson search query = do
-  (ClientConfig b a) <- ask
-  let opts = defaults & param "apikey" .~ [a]
-      url  = b ++ "/api/people/" ++ show search ++ "/" ++ encodePath query
-  lift $ E.try $ asJSON =<< getWith opts url
-
 -- | Get a list of something from the API.
 getList :: FromJSON a
         => String -- ^ The URL (path) to hit
@@ -60,6 +49,18 @@ getList path page limit = do
       url = b ++ path
   lift $ E.try $ asJSON =<< getWith opts url
 
+-- | Finds a unique person by some unique identifier ('SearchType').
+--
+-- Internally, this hits @\/api\/people\/<searchtype>\/<query>@.
+getPerson :: SearchType -- ^ What to filter results by
+          -> String -- ^ The search query
+          -> ReaderT ClientConfig IO (Either E.SomeException (Response PersonResponse))
+getPerson search query = do
+  (ClientConfig b a) <- ask
+  let opts = defaults & param "apikey" .~ [a]
+      url  = b ++ "/api/people/" ++ show search ++ "/" ++ encodePath query
+  lift $ E.try $ asJSON =<< getWith opts url
+
 -- | Get a list of all people.
 --
 -- Internally, this hits @\/api\/people@.
@@ -69,11 +70,23 @@ getPeople :: Integer -- ^ The page number
 getPeople = getList "/api/people"
 {-# INLINE getPeople #-}
 
+-- | Finds a unique group by some unique identifier ('GroupSearchType').
+--
+-- Internally, this hits @\/api\/groups\/<searchtype>\/<query>@.
+getGroup :: GroupSearchType -- ^ What to filter results by
+          -> String -- ^ The search query
+          -> ReaderT ClientConfig IO (Either E.SomeException (Response PersonResponse))
+getGroup search query = do
+  (ClientConfig b a) <- ask
+  let opts = defaults & param "apikey" .~ [a]
+      url  = b ++ "/api/groups/" ++ show search ++ "/" ++ encodePath query
+  lift $ E.try $ asJSON =<< getWith opts url
+
 -- | Get a list of all groups.
 --
 -- Internally, this hits @\/api\/group@.
 getGroups :: Integer -- ^ The page number
           -> Integer -- ^ The limit
-          -> ReaderT ClientConfig IO (Either E.SomeException (Response GroupsResponse))
+          -> ReaderT ClientConfig IO (Either E.SomeException (Response GroupResponse))
 getGroups = getList "/api/group"
 {-# INLINE getGroups #-}
