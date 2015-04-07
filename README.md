@@ -31,7 +31,7 @@ in fas3-haskell-api.
 
 The type of `getPerson` is:
 
-```
+```haskell
 getPerson
   :: ClientConfig
      -> SearchType -> String -> IO (Maybe PersonResponse)
@@ -45,7 +45,7 @@ operation which might (if the JSON decode was successful) contain a
 It is used like this:
 
 
-```
+```haskell
 λ> getPerson (ClientConfig "http://localhost:6543" "8c0e75be6a63c83090660112a7003dfa3fab6209") Username "relrod"
 Just (PersonResponse {personResponseStartTimestamp = 2015-01-18 01:23:30 UTC, personResponseEndTimestamp = 2015-01-18 01:23:30 UTC, personResponsePeople = Person {personUsername = "relrod", personStatus = 1, personIdNumber = 14168, personAvatar = Just "", personFullname = "Ricky Elrod", personCreationDate = 2015-01-17 22:49:23 UTC, personIrcNick = Just "", personEmail = "ricky@elrod.me"}})
 it :: Maybe PersonResponse
@@ -65,7 +65,7 @@ This library makes heavy use of lenses which allows for easy navigation,
 traversal, and modification of various types we expose. To use the above
 example:
 
-```
+```haskell
 λ> fmap (\x -> x ^. people . fullname) relrod
 Just "Ricky Elrod"
 it :: Maybe String
