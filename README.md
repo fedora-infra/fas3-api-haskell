@@ -16,8 +16,8 @@ The first thing to acquaint yourself with is
 This type describes how the client should connect to the API. It takes a base
 URL and an API key.
 
-Most methods in `Fedora.FAS.Client` take a `ClientConfig` as their first
-parameter.
+We make use of the `ReaderT` monad transformer for threading the `ClientConfig`
+around.
 
 #### `getPerson`
 
@@ -33,22 +33,35 @@ The type of `getPerson` is:
 
 ```haskell
 getPerson
-  :: ClientConfig
-     -> SearchType -> String -> IO (Maybe PersonResponse)
+  :: PersonSearchType
+     -> String
+     -> ReaderT
+          ClientConfig IO (Either SomeException (Response PersonResponse))
 ```
 
-…which means that `getPerson` is a function which takes a `ClientConfig`, a
-`SearchType` (described above), and some search query. Then it returns an IO
-operation which might (if the JSON decode was successful) contain a
-`PersonResponse`.
+…which means that `getPerson` is a function which takes a `SearchType`
+(described above), and some search query. Then it returns a `ReaderT` which can
+be run with `runReaderT` and given a `ClientConfig`. The result will be an
+`Either SomeException (Response PersonResponse)` confined by `IO`.
 
 It is used like this:
 
-
 ```haskell
-λ> getPerson (ClientConfig "http://localhost:6543" "8c0e75be6a63c83090660112a7003dfa3fab6209") Username "relrod"
-Just (PersonResponse {personResponseStartTimestamp = 2015-01-18 01:23:30 UTC, personResponseEndTimestamp = 2015-01-18 01:23:30 UTC, personResponsePeople = Person {personUsername = "relrod", personStatus = 1, personIdNumber = 14168, personAvatar = Just "", personFullname = "Ricky Elrod", personCreationDate = 2015-01-17 22:49:23 UTC, personIrcNick = Just "", personEmail = "ricky@elrod.me"}})
-it :: Maybe PersonResponse
+λ> let config = (ClientConfig "http://localhost:6543" "8c0e75be6a63c83090660112a7003dfa3fab6209")
+config :: ClientConfig
+
+
+λ> let req = getPerson Username "relrod"
+req
+  :: ReaderT
+       ClientConfig IO (Either SomeException (Response PersonResponse))
+
+λ> :t runReaderT req config
+runReaderT req config
+  :: IO (Either SomeException (Response PersonResponse))
+
+λ> runReaderT req config
+Right (Response {responseStatus = Status {statusCode = 200, statusMessage = "OK"}, responseVersion = HTTP/1.1, responseHeaders = [("Content-Length","300"),("Content-Type","application/json; charset=UTF-8"),("Date","Sat, 09 May 2015 23:44:56 GMT"),("Server","waitress")], responseBody = PersonResponse {personResponseStartTimestamp = 2015-05-09 23:44:56.7158 UTC, personResponseEndTimestamp = 2015-05-09 23:44:56.727412 UTC, personResponsePeople = Person {personUsername = "relrod", personStatus = 3, personIdNumber = 14168, personAvatar = Just "", personFullname = "Ricky Elrod", personCreationDate = 2015-01-17 22:49:23 UTC, personIrcNick = Just "", personEmail = "ricky@elrod.me"}}, responseCookieJar = CJ {expose = []}, responseClose' = ResponseClose})
 ```
 
 #### `getPeople`
